@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains viper_views.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function viper_views_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the viper_views module.
+    case 'help.page.viper_views':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Custom code-based alterations of Drupal views.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

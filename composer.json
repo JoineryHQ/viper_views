@@ -1,0 +1,16 @@
+{
+    "name": "viper_views",
+    "type": "drupal-module",
+    "description": "Custom code-based alterations of Drupal views.",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/viper_views",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/viper_views",
+        "source": "http://cgit.drupalcode.org/viper_views"
+    },
+    "require": {
+        "drupal/console": "~1.0"
+    }
+}
