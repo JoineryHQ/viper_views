@@ -9,10 +9,12 @@ Licensed under [GNU GENERAL PUBLIC LICENSE, Version 2](LICENSE.txt)
 
 ## Functionality
 
-* In a view named `my_draft_content`, in the display named `page_draft_primary_or_additional_author`, the `INNER JOIN`
-  of the table `users_field_data_node__field_addl_authors__users` is changed to a `LEFT JOIN`.  Without this change,
-  the view, as build in Drupal Views, excludes any nodes that have no additional authors, even if the primary author
-  is the current user; with this change, the view includes such nodes.
+* In a view named `my_draft_content`, the `INNER JOIN` of the table `users_field_data_node__field_addl_authors__users`
+is changed to a `LEFT JOIN`, in the displays named `page_draft_primary_or_additional_author`
+and `page_published_primary_or_additional_author`.  Without this change, the view,
+as built in Drupal Views, excludes any nodes that have no additional authors, even
+if the primary author is the current user; with this change, the view includes such
+nodes.
 
 ## Support
 ![Joinery](/images/joinery-logo.png)
