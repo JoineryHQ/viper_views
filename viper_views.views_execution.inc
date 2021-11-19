@@ -2,6 +2,40 @@
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 
+/**
+ * Implements hook_views_pre_render().
+ */
+function viper_views_views_pre_render(ViewExecutable $view) {
+  $settings = \Drupal::config('viper_views')->get();
+  // If certain settings are defined, and if they match attributes of this view,
+  // we'll take action.
+  if (
+    // If we're configured to display a certain block.
+    !empty($settings['teachingResourcesAccessWarningBlockId'])
+    // If we're configured for a certain view, and this is that view.
+    && !empty($settings['teachingResourcesViewId'])
+    && $view->id() == $settings['teachingResourcesViewId']
+    // If we're configured for a certain view display, and this is that view display.
+    && !empty($settings['teachingResourcesViewDisplayId'])
+    && $view->getDisplay()->display['id'] == $settings['teachingResourcesViewDisplayId']
+    // If we're configured to check the value of a certain view filter, and that filter has submitted values.
+    && !empty($settings['teachingResourcesContentTypeFilterName'])
+    && is_array($view->exposed_raw_input[$settings['teachingResourcesContentTypeFilterName']])
+    // If we're configured to check that filter for a certain value, and that filter has this value.
+    && !empty($settings['teachingResourcesContentTypeProblemSetValue'])
+    && in_array($settings['teachingResourcesContentTypeProblemSetValue'], $view->exposed_raw_input[$settings['teachingResourcesContentTypeFilterName']])
+  ) {
+    // Get a renderable form of that block.
+    $block = \Drupal\block\Entity\Block::load($settings['teachingResourcesAccessWarningBlockId']);
+    // Ensure user has access to view the block (we expect this depends on configuration
+    // such as by Block Visibility Groups or other.)
+    $access = $block->access('view', NULL, TRUE);
+    if ($access->isAllowed()) {
+      // Prepend the block to the top of the views output.
+      $view->attachment_before = \Drupal::service('entity.manager')->getViewBuilder('block')->view($block);
+    }
+  }
+}
 function viper_views_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if ($view->id() == 'my_draft_content' &&
     (
