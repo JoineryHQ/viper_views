@@ -1,11 +1,13 @@
 <?php
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\viper_views\BlockConditionAccessResolver;
 
 /**
  * Implements hook_views_pre_render().
  */
 function viper_views_views_pre_render(ViewExecutable $view) {
+  // Load settings for this module, which are probably in drupal's settings.php.
   $settings = \Drupal::config('viper_views')->get();
   // If certain settings are defined, and if they match attributes of this view,
   // we'll take action.
@@ -25,17 +27,27 @@ function viper_views_views_pre_render(ViewExecutable $view) {
     && !empty($settings['teachingResourcesContentTypeProblemSetValue'])
     && in_array($settings['teachingResourcesContentTypeProblemSetValue'], $view->exposed_raw_input[$settings['teachingResourcesContentTypeFilterName']])
   ) {
-    // Get a renderable form of that block.
+
+    // Load the block.
     $block = \Drupal\block\Entity\Block::load($settings['teachingResourcesAccessWarningBlockId']);
-    // Ensure user has access to view the block (we expect this depends on configuration
-    // such as by Block Visibility Groups or other.)
-    $access = $block->access('view', NULL, TRUE);
-    if ($access->isAllowed()) {
+
+    // If this block is capable of being displayed on the page (with NO REGARD
+    // for the block's request_path configuration), then display it here.
+    // We do our own condition checking here because we have found no way to
+    // bypass request_path config via hooks -- i.e., if the block is not configured
+    // to display on the current page, then $block->access()->isAllowed() will
+    // always return false.
+    $resolver = new BlockConditionAccessResolver($block);
+    if ($resolver->resolve()) {
       // Prepend the block to the top of the views output.
       $view->attachment_before = \Drupal::service('entity.manager')->getViewBuilder('block')->view($block);
     }
   }
 }
+
+/**
+ * Implements hook_views_query_alter().
+ */
 function viper_views_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if ($view->id() == 'my_draft_content' &&
     (
