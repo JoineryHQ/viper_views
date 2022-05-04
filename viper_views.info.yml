@@ -1,5 +1,5 @@
 name: 'Viper Views'
 type: module
 description: 'Custom code-based alterations of Drupal views.'
-core: 8.x
+core_version_requirement: ^8.8 || ^9
 package: 'Custom'
