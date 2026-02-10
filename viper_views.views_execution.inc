@@ -40,7 +40,7 @@ function viper_views_views_pre_render(ViewExecutable $view) {
     $resolver = new BlockConditionAccessResolver($block);
     if ($resolver->resolve()) {
       // Prepend the block to the top of the views output.
-      $view->attachment_before = \Drupal::service('entity.manager')->getViewBuilder('block')->view($block);
+      $view->attachment_before = \Drupal::service('entity_type.manager')->getViewBuilder('block')->view($block);
     }
   }
 }
